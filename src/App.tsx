@@ -1,26 +1,40 @@
-import React from 'react';
-import { ReactComponent as Logo } from './logo.svg';
-import './App.css';
+import React, { Component } from 'react';
+import './App.scss';
+import state from './state';
+import { Theme } from './contracts';
+import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+import AOS from 'aos';
+import 'aos/src/sass/aos.scss';
 
-function App() {
-	return (
-		<div className='App'>
-			<header className='App-header'>
-				<Logo className='App-logo' />
-				<p>
-					Edit <code>src/App.tsx</code> and save to reload.
-				</p>
-				<a
-					className='App-link'
-					href='https://reactjs.org'
-					target='_blank'
-					rel='noopener noreferrer'
-				>
-					Learn React
-				</a>
-			</header>
-		</div>
-	);
+export type State = {
+	theme: Theme;
+};
+
+export default class App extends Component<{}, State> {
+	render() {
+		return <div className={`${this.state.theme} app`}>hiii</div>;
+	}
+
+	key = -1;
+
+	constructor(props: {}) {
+		super(props);
+		this.state = {
+			theme: state.has('theme') ? state.get<Theme>('theme') : 'light',
+		};
+	}
+
+	componentDidMount() {
+		AOS.init();
+		this.key = state.listen<Theme>('theme', (theme) => {
+			this.setState({ theme });
+			(document.querySelector('body') as HTMLBodyElement).classList.add(
+				theme
+			);
+		});
+	}
+
+	componentWillUnmount() {
+		state.removeListener('theme', this.key);
+	}
 }
-
-export default App;
