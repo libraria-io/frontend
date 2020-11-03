@@ -2,9 +2,14 @@ import React, { Component } from 'react';
 import './App.scss';
 import state from './state';
 import { Theme } from './contracts';
-import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+import { BrowserRouter as Router } from 'react-router-dom';
 import AOS from 'aos';
 import 'aos/src/sass/aos.scss';
+import './boot';
+
+import Routes from './routes';
+
+import Navbar from './components/Navbar';
 
 export type State = {
 	theme: Theme;
@@ -12,7 +17,14 @@ export type State = {
 
 export default class App extends Component<{}, State> {
 	render() {
-		return <div className={`${this.state.theme} app`}>hiii</div>;
+		return (
+			<div className='login-page sidebar-collapse'>
+				<Router>
+					<Navbar />
+					<Routes />
+				</Router>
+			</div>
+		);
 	}
 
 	key = -1;
