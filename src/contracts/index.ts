@@ -1,9 +1,21 @@
 export type Theme = 'dark' | 'light';
 
+export type Roles = 'Admin' | 'Normal';
+
 export interface Model {
 	id: number;
 	created_at: Date | string;
 	updated_at: Date | string;
+}
+
+export interface Role extends Model {
+	name: Roles;
+	guard_name: string;
+	pivot: {
+		model_id: number;
+		role_id: number;
+		model_type: string;
+	};
 }
 
 export interface User extends Model {
@@ -13,6 +25,7 @@ export interface User extends Model {
 	remember_token?: string;
 	email_verified_at: Date | string;
 	authors?: Array<Author>;
+	roles?: Array<Role>;
 }
 
 export interface File extends Model {

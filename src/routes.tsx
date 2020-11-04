@@ -4,6 +4,12 @@ import Home from './components/Home';
 import Login from './components/Login';
 import Register from './components/Register';
 
+// Administrator
+import Dashboard from './components/User/Admin/Dashboard';
+
+// 404
+import FourZeroFour from './components/FZF';
+
 export default class Routes extends Component {
 	render() {
 		return (
@@ -11,6 +17,8 @@ export default class Routes extends Component {
 				<Route path='/' exact component={Home} />
 				<Route path='/login' component={Login} />
 				<Route path='/register' component={Register} />
+				<Route path='/dashboard' component={Dashboard} />
+				<Route component={FourZeroFour} />
 			</Switch>
 		);
 	}

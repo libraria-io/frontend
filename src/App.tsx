@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import './App.scss';
 import state from './state';
 import { Theme } from './contracts';
-import { BrowserRouter as Router } from 'react-router-dom';
+import { BrowserRouter as Router, RouteComponentProps } from 'react-router-dom';
 import AOS from 'aos';
 import 'aos/src/sass/aos.scss';
 import './boot';
@@ -29,7 +29,7 @@ export default class App extends Component<{}, State> {
 
 	key = -1;
 
-	constructor(props: {}) {
+	constructor(props: RouteComponentProps) {
 		super(props);
 		this.state = {
 			theme: state.has('theme') ? state.get<Theme>('theme') : 'light',

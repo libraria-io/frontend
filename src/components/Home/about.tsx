@@ -7,9 +7,13 @@ import Login from '../../assets/img/login.jpg';
 export default class About extends Component {
 	render() {
 		return (
-			<div className='section section-about-us'>
+			<div className='section section-about-us overflow-none'>
 				<div className='container'>
-					<div className='row'>
+					<div
+						className='row'
+						data-aos='fade-left'
+						data-aos-duration='1200'
+					>
 						<div className='col-md-8 ml-auto mr-auto text-center'>
 							<h2 className='title'>Who are we?</h2>
 							<h5 className='description'>
@@ -29,6 +33,8 @@ export default class About extends Component {
 									style={{
 										backgroundImage: `url(${Login})`,
 									}}
+									data-aos='fade-right'
+									data-aos-duration='1100'
 								>
 									<p className='blockquote blockquote-primary'>
 										"Lorem ipsum dolor sit amet consectetur
@@ -46,6 +52,8 @@ export default class About extends Component {
 									style={{
 										backgroundImage: `url(${BG3})`,
 									}}
+									data-aos='fade-right'
+									data-aos-duration='1300'
 								></div>
 							</div>
 							<div className='col-md-5'>
@@ -54,18 +62,29 @@ export default class About extends Component {
 									style={{
 										backgroundImage: `url(${BG1})`,
 									}}
+									data-aos='fade-left'
+									data-aos-duration='1400'
 								></div>
-								<h3>
+								<h3
+									data-aos='fade-left'
+									data-aos-duration='1500'
+								>
 									Lorem ipsum dolor sit amet, consectetur
 									adipisicing elit.
 								</h3>
-								<p>
+								<p
+									data-aos='fade-left'
+									data-aos-duration='1600'
+								>
 									Lorem ipsum dolor sit amet consectetur
 									adipisicing elit. Neque ea perspiciatis
 									voluptatibus tenetur rerum quod voluptate
 									accusantium expedita.
 								</p>
-								<p>
+								<p
+									data-aos='fade-left'
+									data-aos-duration='1700'
+								>
 									Lorem ipsum dolor sit amet consectetur
 									adipisicing elit. Nesciunt et quisquam
 									repudiandae harum? Recusandae nihil cumque
@@ -73,7 +92,10 @@ export default class About extends Component {
 									consequatur rerum iusto tenetur, excepturi,
 									numquam modi debitis error?
 								</p>
-								<p>
+								<p
+									data-aos='fade-left'
+									data-aos-duration='1800'
+								>
 									Lorem, ipsum dolor sit amet consectetur
 									adipisicing elit. Tempore pariatur dolorum
 									voluptatibus quod est dicta, fugit laborum

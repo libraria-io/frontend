@@ -1,8 +1,91 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 
-export default class Menu extends Component {
+import state from '../../state';
+
+import { Role, User } from '../../contracts';
+
+type State = {
+	user: User | null;
+	logged: boolean;
+	role: Role | null;
+};
+
+export default class Menu extends Component<{}, State> {
+	protected userKey = -1;
+	protected roleKey = -1;
+
+	constructor(props: {}) {
+		super(props);
+
+		this.state = {
+			user: state.get<User>('user'),
+			logged: state.has('user'),
+			role: state.get<Role>('role'),
+		};
+	}
+
+	componentDidMount() {
+		this.userKey = state.listen<User>('user', (user) => {
+			this.setState({
+				user,
+				logged: user !== null,
+			});
+		});
+		this.roleKey = state.listen<Role>('role', (role) => {
+			this.setState({ role });
+		});
+	}
+
+	componentWillUnmount() {
+		state.removeListener('user', this.userKey);
+		state.removeListener('role', this.roleKey);
+	}
+
+	determineRole() {
+		return this.state.role && this.state.role.name === 'Admin'
+			? '/dashboard'
+			: '/account';
+	}
+
+	path(route: string) {
+		return this.state.logged ? this.determineRole() + route : route;
+	}
+
+	renderLinks() {
+		if (!this.state.logged) {
+			return [
+				<Link className='dropdown-item' to='/books' key={0}>
+					Books
+				</Link>,
+				<Link className='dropdown-item' to='/categories' key={1}>
+					Categories
+				</Link>,
+				<Link className='dropdown-item' to='/authors' key={2}>
+					Authors
+				</Link>,
+				<div className='dropdown-divider' key={3}></div>,
+			];
+		}
+		return [
+			<Link className='dropdown-item' to={this.path('/')} key={0}>
+				Dashboard
+			</Link>,
+			<Link className='dropdown-item' to={this.path('/profile')} key={1}>
+				Profile
+			</Link>,
+			<Link className='dropdown-item' to={this.path('/settings')} key={2}>
+				Settings
+			</Link>,
+			<div className='dropdown-divider' key={3}></div>,
+			<Link className='dropdown-item' to={this.path('/logout')} key={4}>
+				Logout
+			</Link>,
+		];
+	}
+
 	render() {
+		const fragments = window.location.pathname.split('/');
 		return (
 			<div className='dropdown button-dropdown'>
 				<a
@@ -24,22 +107,17 @@ export default class Menu extends Component {
 					>
 						Menu
 					</a>
-					<Link className='dropdown-item' to='/books'>
-						Books
-					</Link>
-					<Link className='dropdown-item' to='/categories'>
-						Categories
-					</Link>
-					<Link className='dropdown-item' to='/authors'>
-						Authors
-					</Link>
-					<div className='dropdown-divider'></div>
-					<Link className='dropdown-item' to='/login'>
-						Sign In
-					</Link>
-					<Link className='dropdown-item' to='/register'>
-						Sign Up
-					</Link>
+					{this.renderLinks()}
+					{!this.state.logged && !fragments.includes('login') ? (
+						<Link className='dropdown-item' to='/login'>
+							Sign In
+						</Link>
+					) : null}
+					{!this.state.logged && !fragments.includes('register') ? (
+						<Link className='dropdown-item' to='/register'>
+							Sign Up
+						</Link>
+					) : null}
 				</div>
 			</div>
 		);

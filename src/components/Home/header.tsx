@@ -6,7 +6,7 @@ import BG6 from '../../assets/img/bg6.jpg';
 export default class Header extends Component {
 	render() {
 		return (
-			<div className='page-header page-header-small'>
+			<div className='page-header page-header-small overflow-none'>
 				<div
 					className='page-header-image'
 					data-parallax='true'
@@ -15,7 +15,11 @@ export default class Header extends Component {
 					}}
 				></div>
 				<div className='content-center'>
-					<div className='container'>
+					<div
+						className='container'
+						data-aos='fade-right'
+						data-aos-duration='1000'
+					>
 						<h2 className='title'>
 							Today's research, tomorrow's innovation.
 						</h2>

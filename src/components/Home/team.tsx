@@ -3,9 +3,17 @@ import React, { Component } from 'react';
 export default class Team extends Component {
 	render() {
 		return (
-			<div className='section section-team text-center'>
+			<div className='section section-team text-center overflow-none'>
 				<div className='container'>
-					<h2 className='title'>The Creator</h2>
+					<h2
+						className='title'
+						data-aos='fade-right'
+						data-aos-anchor-placement='top-bottom'
+						data-aos-delay='200'
+						data-aos-duration='1000'
+					>
+						The Creator
+					</h2>
 					<div className='team'>
 						<div className='row'>
 							<div className='col-sm-12 col-md-4 offset-md-4'>
@@ -14,14 +22,34 @@ export default class Team extends Component {
 										src='https://avatars1.githubusercontent.com/u/56546989?s=460&u=cb4b333610a43932f3dc5aab0ca8c1994a30fb0b&v=4'
 										alt='Thumbnail'
 										className='rounded-circle img-fluid img-raised'
+										data-aos='fade-up'
+										data-aos-anchor-placement='top-bottom'
+										data-aos-delay='200'
+										data-aos-duration='1000'
 									/>
-									<h4 className='title'>
+									<h4
+										className='title'
+										data-aos='fade-left'
+										data-aos-anchor-placement='top-bottom'
+										data-aos-delay='200'
+										data-aos-duration='1000'
+									>
 										John Michael Manlupig
 									</h4>
-									<p className='category text-primary'>
+									<p
+										className='category text-primary'
+										data-aos='fade-right'
+										data-aos-anchor-placement='top-bottom'
+										data-aos-duration='1000'
+									>
 										Web Developer
 									</p>
-									<p className='description'>
+									<p
+										className='description'
+										data-aos='fade-left'
+										data-aos-anchor-placement='top-bottom'
+										data-aos-duration='1000'
+									>
 										"The public is more familiar with bad
 										design than good design. It is, in
 										effect, conditioned to prefer bad
@@ -34,6 +62,9 @@ export default class Team extends Component {
 										target='_blank'
 										rel='noopener noreferrer'
 										className='btn btn-primary btn-icon btn-round'
+										data-aos='fade-right'
+										data-aos-anchor-placement='top-bottom'
+										data-aos-duration='1000'
 									>
 										<i className='fab fa-twitter'></i>
 									</a>
@@ -42,6 +73,9 @@ export default class Team extends Component {
 										target='_blank'
 										rel='noopener noreferrer'
 										className='btn btn-primary btn-icon btn-round'
+										data-aos='fade-right'
+										data-aos-anchor-placement='top-bottom'
+										data-aos-duration='1000'
 									>
 										<i className='fab fa-instagram'></i>
 									</a>
@@ -50,6 +84,9 @@ export default class Team extends Component {
 										target='_blank'
 										rel='noopener noreferrer'
 										className='btn btn-primary btn-icon btn-round'
+										data-aos='fade-left'
+										data-aos-anchor-placement='top-bottom'
+										data-aos-duration='1000'
 									>
 										<i className='fab fa-facebook-square'></i>
 									</a>
@@ -58,6 +95,9 @@ export default class Team extends Component {
 										target='_blank'
 										rel='noopener noreferrer'
 										className='btn btn-primary btn-icon btn-round'
+										data-aos='fade-left'
+										data-aos-anchor-placement='top-bottom'
+										data-aos-duration='1000'
 									>
 										<i className='fab fa-github'></i>
 									</a>

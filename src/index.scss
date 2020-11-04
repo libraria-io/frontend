@@ -1,0 +1,36 @@
+.overflow-none {
+	overflow: hidden;
+}
+
+.x-overflow-none {
+	overflow-x: hidden;
+}
+
+.icon-spin {
+	animation: spinning 2s linear infinite;
+}
+
+@-moz-keyframes spinning {
+	from {
+		-moz-transform: rotate(0deg);
+	}
+	to {
+		-moz-transform: rotate(360deg);
+	}
+}
+@-webkit-keyframes spinning {
+	from {
+		-webkit-transform: rotate(0deg);
+	}
+	to {
+		-webkit-transform: rotate(360deg);
+	}
+}
+@keyframes spinning {
+	from {
+		transform: rotate(0deg);
+	}
+	to {
+		transform: rotate(360deg);
+	}
+}

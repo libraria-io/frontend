@@ -10,6 +10,7 @@ import LoginBG from '../../assets/img/bg11.jpg';
 import { ReactComponent as Logo } from '../../assets/logo-white.svg';
 
 import { User } from '../../contracts';
+import { handleErrors } from '../../helpers';
 
 interface FormState {
 	email: string;
@@ -17,30 +18,70 @@ interface FormState {
 }
 
 export default class Login extends Component<RouteComponentProps> {
-	async handleSubmit(
-		values: FormState,
-		{ setSubmitting }: FormikHelpers<FormState>
-	) {
-		try {
-			const response = await Axios.post<{
-				user: User;
-				token: string;
-			}>('/auth/login', values);
+	handleSubmit() {
+		return async (
+			values: FormState,
+			{ setSubmitting }: FormikHelpers<FormState>
+		) => {
+			try {
+				const response = await Axios.post<{
+					user: User;
+					token: string;
+				}>('/auth/login', values);
 
-			const { user, token } = response.data;
+				const { user, token } = response.data;
 
-			state.set('user', user);
-			state.set('token', token);
+				if (!user.roles) {
+					toastr.info('There was a problem with your login.');
+					return;
+				}
 
-			this.props.history.push('/books');
-		} catch (error) {
-			console.log(error);
-			if (error.response && error.response.status === 422) {
-				toastr.error(error.response.data.message);
+				const role = user.roles[0];
+				let destination: string | null = null;
+
+				switch (role.name) {
+					case 'Admin':
+						destination = '/dashboard';
+						break;
+					case 'Normal':
+						destination = '/account';
+						break;
+					default:
+						toastr.info('There was a problem with your account.');
+						break;
+				}
+
+				if (destination) {
+					state.set('user', user);
+					state.set('token', token);
+					state.set('role', role);
+
+					this.props.history.push(destination);
+					toastr.success('Logged in successfully!');
+				}
+			} catch (error) {
+				console.log(error.toJSON ? error.toJSON() : error);
+				handleErrors(error);
+			} finally {
+				setSubmitting(false);
 			}
-		} finally {
-			setSubmitting(false);
+		};
+	}
+
+	validate(values: FormState) {
+		const errors: {
+			[key: string]: string;
+		} = {};
+		if (!values.email) {
+			errors.email = 'Email is required.';
 		}
+		if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(values.email)) {
+			errors.email = 'Email must be valid.';
+		}
+		if (!values.password) {
+			errors.password = 'Password is required.';
+		}
+		return errors;
 	}
 
 	render() {
@@ -58,20 +99,8 @@ export default class Login extends Component<RouteComponentProps> {
 							<div className='card card-login card-plain'>
 								<Formik
 									initialValues={formState}
-									validate={(values) => {
-										const errors: {
-											[key: string]: string;
-										} = {};
-										if (!values.email) {
-											errors.email = 'Email is required.';
-										}
-										if (!values.password) {
-											errors.password =
-												'Password is required.';
-										}
-										return errors;
-									}}
-									onSubmit={this.handleSubmit}
+									validate={this.validate}
+									onSubmit={this.handleSubmit()}
 								>
 									{({ isSubmitting }) => (
 										<Form className='form'>
@@ -86,7 +115,7 @@ export default class Login extends Component<RouteComponentProps> {
 														</span>
 													</div>
 													<Field
-														type='email'
+														type='text'
 														name='email'
 														placeholder='Email'
 														className='form-control'
@@ -126,7 +155,11 @@ export default class Login extends Component<RouteComponentProps> {
 													}`}
 													disabled={isSubmitting}
 												>
-													Sign In
+													{isSubmitting ? (
+														<i className='now-ui-icons arrows-1_refresh-69 icon-spin'></i>
+													) : (
+														'Sign In'
+													)}
 												</button>
 												<div className='row'>
 													<h6 className='col-sm-12 col-md-6'>

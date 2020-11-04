@@ -1,7 +1,95 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
+import { Role, User } from '../../contracts';
 
-export default class Links extends Component {
+import state from '../../state';
+
+type State = {
+	user: User | null;
+	logged: boolean;
+	role: Role | null;
+};
+
+export default class Links extends Component<{}, State> {
+	protected userKey = -1;
+	protected roleKey = -1;
+
+	constructor(props: {}) {
+		super(props);
+
+		this.state = {
+			user: state.get<User>('user'),
+			logged: state.has('user'),
+			role: state.get<Role>('role'),
+		};
+	}
+
+	componentDidMount() {
+		this.userKey = state.listen<User>('user', (user) => {
+			this.setState({
+				user,
+				logged: user !== null,
+			});
+		});
+		this.roleKey = state.listen<Role>('role', (role) => {
+			this.setState({ role });
+		});
+	}
+
+	componentWillUnmount() {
+		state.removeListener('user', this.userKey);
+		state.removeListener('role', this.roleKey);
+	}
+
+	determineRole() {
+		return this.state.role && this.state.role.name === 'Admin'
+			? '/dashboard'
+			: '/account';
+	}
+
+	path(route: string) {
+		return this.state.logged ? this.determineRole() + route : route;
+	}
+
+	renderLinks() {
+		const links = [
+			<li className='nav-item' key={0}>
+				<Link className='nav-link' to={this.path('/authors')}>
+					Authors
+				</Link>
+			</li>,
+			<li className='nav-item' key={1}>
+				<Link className='nav-link' to={this.path('/books')}>
+					Books
+				</Link>
+			</li>,
+			<li className='nav-item' key={2}>
+				<Link className='nav-link' to={this.path('/categories')}>
+					Categories
+				</Link>
+			</li>,
+		];
+
+		if (this.state.role && this.state.role.name === 'Admin') {
+			links.push(
+				<li className='nav-item' key={3}>
+					<Link className='nav-link' to={this.path('/tags')}>
+						Tags
+					</Link>
+				</li>
+			);
+			links.push(
+				<li className='nav-item' key={4}>
+					<Link className='nav-link' to={this.path('/users')}>
+						Users
+					</Link>
+				</li>
+			);
+		}
+
+		return links;
+	}
+
 	render() {
 		return (
 			<div
@@ -10,21 +98,7 @@ export default class Links extends Component {
 				data-nav-image='/assets/img/blurred-image-1.jpg'
 			>
 				<ul className='navbar-nav'>
-					<li className='nav-item'>
-						<Link className='nav-link' to='/authors'>
-							Authors
-						</Link>
-					</li>
-					<li className='nav-item'>
-						<Link className='nav-link' to='/books'>
-							Books
-						</Link>
-					</li>
-					<li className='nav-item'>
-						<Link className='nav-link' to='/categories'>
-							Categories
-						</Link>
-					</li>
+					{this.renderLinks()}
 					<li className='nav-item'>
 						<a
 							className='nav-link'

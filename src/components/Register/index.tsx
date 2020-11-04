@@ -11,6 +11,8 @@ import { ReactComponent as Logo } from '../../assets/logo-white.svg';
 
 import { User } from '../../contracts';
 
+import { handleErrors } from '../../helpers';
+
 interface FormState {
 	email: string;
 	password: string;
@@ -18,30 +20,54 @@ interface FormState {
 }
 
 export default class Register extends Component<RouteComponentProps> {
-	async handleSubmit(
-		values: FormState,
-		{ setSubmitting }: FormikHelpers<FormState>
-	) {
-		try {
-			const response = await Axios.post<{
-				user: User;
-				token: string;
-			}>('/auth/register', values);
+	handleSubmit() {
+		return async (
+			values: FormState,
+			{ setSubmitting }: FormikHelpers<FormState>
+		) => {
+			try {
+				const response = await Axios.post<{
+					user: User;
+					token: string;
+				}>('/auth/register', values);
 
-			const { user, token } = response.data;
+				const { user, token } = response.data;
 
-			state.set('user', user);
-			state.set('token', token);
+				if (!user.roles) {
+					toastr.info('There was a problem with your registration.');
+				} else {
+					const role = user.roles[0];
 
-			this.props.history.push('/books');
-		} catch (error) {
-			console.log(error);
-			if (error.response && error.response.status === 422) {
-				toastr.error(error.response.data.message);
+					state.set('role', role);
+					state.set('user', user);
+					state.set('token', token);
+
+					this.props.history.push('/account');
+					toastr.success('Registered successfully!');
+				}
+			} catch (error) {
+				console.log(error.toJSON ? error.toJSON() : error);
+				handleErrors(error);
+			} finally {
+				setSubmitting(false);
 			}
-		} finally {
-			setSubmitting(false);
+		};
+	}
+
+	validate(values: FormState) {
+		const errors: {
+			[key: string]: string;
+		} = {};
+		if (!values.name) {
+			errors.name = 'Name is required.';
 		}
+		if (!values.email) {
+			errors.email = 'Email is required.';
+		}
+		if (!values.password) {
+			errors.password = 'Password is required.';
+		}
+		return errors;
 	}
 
 	render() {
@@ -59,23 +85,8 @@ export default class Register extends Component<RouteComponentProps> {
 							<div className='card card-login card-plain'>
 								<Formik
 									initialValues={formState}
-									validate={(values) => {
-										const errors: {
-											[key: string]: string;
-										} = {};
-										if (!values.name) {
-											errors.name = 'Name is required.';
-										}
-										if (!values.email) {
-											errors.email = 'Email is required.';
-										}
-										if (!values.password) {
-											errors.password =
-												'Password is required.';
-										}
-										return errors;
-									}}
-									onSubmit={this.handleSubmit}
+									validate={this.validate}
+									onSubmit={this.handleSubmit()}
 								>
 									{({ isSubmitting }) => (
 										<Form className='form'>
@@ -148,7 +159,11 @@ export default class Register extends Component<RouteComponentProps> {
 													}`}
 													disabled={isSubmitting}
 												>
-													Sign Up
+													{isSubmitting ? (
+														<i className='now-ui-icons arrows-1_refresh-69 icon-spin'></i>
+													) : (
+														'Sign Up'
+													)}
 												</button>
 												<div className='row'>
 													<h6 className='col-sm-12 col-md-6'>
