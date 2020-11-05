@@ -61,16 +61,26 @@ export default class BookForm extends Component<RCProps<Params>, State> {
 	componentDidMount() {
 		const id = this.props.match.params.id;
 		if (this.state.mode === 'Edit' && id) {
-			this.bookService.get(id).then((book) => {
-				this.setState({
-					photo_url: book.photo?.uri as string,
+			this.bookService
+				.get(id)
+				.then((book) => {
+					this.bookService.setModel(book);
+					this.setState({
+						photo_url: book.photo?.uri as string,
+					});
+					const set = this.setter;
+					set('title', book.title);
+					set('description', book.description);
+					set('category_id', book.category?.id as number);
+					set('author_id', book.author?.id as number);
+				})
+				.catch((error) => {
+					console.log(error);
+					toastr.error(
+						'Something went wrong. Check your internet connection and try again.'
+					);
+					this.props.history.goBack();
 				});
-				const set = this.setter;
-				set('title', book.title);
-				set('description', book.description);
-				set('category_id', book.category?.id as number);
-				set('author_id', book.author?.id as number);
-			});
 		}
 
 		Promise.all([
@@ -147,9 +157,11 @@ export default class BookForm extends Component<RCProps<Params>, State> {
 			values: FormState,
 			{ setSubmitting }: FormikHelpers<FormState>
 		) => {
-			if (!values.photo) {
-				toastr.error('Photo is required.');
-				return setSubmitting(false);
+			if (this.state.mode === 'Add') {
+				if (!values.photo) {
+					toastr.error('Photo is required.');
+					return setSubmitting(false);
+				}
 			}
 			this.bookService.setForm(values);
 			this.request()
@@ -295,6 +307,9 @@ export default class BookForm extends Component<RCProps<Params>, State> {
 													<option
 														key={index}
 														value={tag.id}
+														selected={values.tag_ids.includes(
+															tag.id
+														)}
 													>
 														{tag.name}
 													</option>

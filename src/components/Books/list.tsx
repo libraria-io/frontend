@@ -1,8 +1,11 @@
-import React, { Component } from 'react';
+import React, { Component, MouseEvent } from 'react';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import { Book, PaginatedData } from '../../contracts';
 import { handleErrors } from '../../helpers';
 import { BookService } from '../../services';
+import toastr from 'toastr';
+
+import Modal from '../Modal';
 
 import { ReactComponent as PencilIcon } from 'bootstrap-icons/icons/pencil.svg';
 import { ReactComponent as TrashIcon } from 'bootstrap-icons/icons/trash.svg';
@@ -35,13 +38,34 @@ export default class List extends Component<RouteComponentProps, State> {
 			return this.setState({ data, loaded: true });
 		} catch (error) {
 			handleErrors(error, 'Unable to fetch books.');
-			return Promise.reject(error);
 		}
 	}
 
 	randomBadge() {
 		const badges = ['primary', 'warning', 'success', 'info', 'danger'];
 		return badges[Math.floor(Math.random() * badges.length)];
+	}
+
+	deleteBook(index: number) {
+		const book = this.state.data.data[index];
+		return (e: MouseEvent<HTMLButtonElement>) => {
+			e.preventDefault();
+			const modal = $(`#deleteBookModal${index}`) as any;
+			modal.modal('hide');
+			modal.on('hidden.bs.modal', () => {
+				this.service
+					.setModel(book)
+					.delete()
+					.then(() =>
+						toastr.success('Book deleted successfully.', book.title)
+					)
+					.catch((error) => {
+						console.log(error);
+						handleErrors(error, 'Unable to delete book.');
+					})
+					.finally(() => this.refresh());
+			});
+		};
 	}
 
 	render() {
@@ -94,14 +118,28 @@ export default class List extends Component<RouteComponentProps, State> {
 												>
 													<PencilIcon />
 												</Link>
-												<Link
-													className='align-self-center mx-1'
-													to={path(
-														`/${book.id}/delete`
-													)}
+												<TrashIcon
+													className='align-self-center mx-1 text-primary clickable'
+													data-toggle='modal'
+													data-target={`#deleteBookModal${index}`}
+												/>
+												<Modal
+													id={`deleteBookModal${index}`}
+													title='Delete Book'
+													button={
+														<button
+															className='btn btn-danger btn-sm'
+															onClick={this.deleteBook(
+																index
+															)}
+														>
+															Confirm
+														</button>
+													}
 												>
-													<TrashIcon />
-												</Link>
+													Are you sure you want to
+													delete {book.title}?
+												</Modal>
 											</h5>
 											<h6 className='card-title'>
 												{book.category?.name}
@@ -115,19 +153,26 @@ export default class List extends Component<RouteComponentProps, State> {
 											<div className='card-text'>
 												By: {book.author?.user?.name}
 											</div>
-											{book.tags?.map((tag, index) => (
-												<small
-													className={`mx-1 badge-${this.randomBadge()}`}
-													key={index}
-													style={{
-														fontSize: '10px',
-														padding: '2px 4px',
-														borderRadius: '4px',
-													}}
-												>
-													{tag.name}
-												</small>
-											))}
+											<div>
+												{book.tags?.map(
+													(tag, index) => (
+														<small
+															className={`mx-1 badge-${this.randomBadge()}`}
+															key={index}
+															style={{
+																fontSize:
+																	'10px',
+																padding:
+																	'2px 4px',
+																borderRadius:
+																	'4px',
+															}}
+														>
+															{tag.name}
+														</small>
+													)
+												)}
+											</div>
 										</div>
 									</div>
 								</div>

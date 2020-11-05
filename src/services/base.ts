@@ -11,9 +11,9 @@ export abstract class BaseService<T extends Model, FS> {
 	isLoading = false;
 	protected setState: any;
 
-	constructor(setState: any, model?: T) {
+	constructor(setState?: any, model?: T) {
 		this.model = model || ({} as T);
-		this.setState = setState;
+		this.setState = setState || (() => {});
 	}
 
 	getModel() {
@@ -37,10 +37,12 @@ export abstract class BaseService<T extends Model, FS> {
 	setForm(values: FS) {
 		this.form = new FormData();
 		Object.entries(values).forEach(([key, value]) => {
-			if (Array.isArray(value)) {
-				value.forEach((v) => this.form.append(`${key}[]`, v));
-			} else {
-				this.form.append(key, value);
+			if (value !== null) {
+				if (Array.isArray(value)) {
+					value.forEach((v) => this.form.append(`${key}[]`, v));
+				} else {
+					this.form.append(key, value);
+				}
 			}
 		});
 		return this;
@@ -72,7 +74,8 @@ export abstract class BaseService<T extends Model, FS> {
 
 	put<R = T>() {
 		this.setState({ isLoading: true });
-		return Axios.put<R>(`${this.url}/${this.model.id}`, this.form)
+		this.form.append('_method', 'PUT');
+		return Axios.post<R>(`${this.url}/${this.model.id}`, this.form)
 			.then((response) => response.data)
 			.catch((error) => Promise.reject(error))
 			.finally(() => this.setState({ isLoading: false }));
@@ -80,7 +83,8 @@ export abstract class BaseService<T extends Model, FS> {
 
 	patch<R = T>() {
 		this.setState({ isLoading: true });
-		return Axios.patch<R>(`${this.url}/${this.model.id}`, this.form)
+		this.form.append('_method', 'PATCH');
+		return Axios.post<R>(`${this.url}/${this.model.id}`, this.form)
 			.then((response) => response.data)
 			.catch((error) => Promise.reject(error))
 			.finally(() => this.setState({ isLoading: false }));
