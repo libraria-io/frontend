@@ -18,9 +18,9 @@ export default class Links extends Component<{}, State> {
 		super(props);
 
 		this.state = {
-			user: state.get<User>('user'),
+			user: state.has('user') ? state.get<User>('user') : null,
 			logged: state.has('user'),
-			role: state.get<Role>('role'),
+			role: state.has('role') ? state.get<Role>('role') : null,
 		};
 	}
 
@@ -52,18 +52,34 @@ export default class Links extends Component<{}, State> {
 	}
 
 	renderLinks() {
+		const fragments = window.location.pathname.split('/');
 		const links = [
-			<li className='nav-item' key={0}>
+			<li
+				className={`nav-item ${
+					fragments.includes('authors') ? 'active' : ''
+				}`}
+				key={0}
+			>
 				<Link className='nav-link' to={this.path('/authors')}>
 					Authors
 				</Link>
 			</li>,
-			<li className='nav-item' key={1}>
+			<li
+				className={`nav-item ${
+					fragments.includes('books') ? 'active' : ''
+				}`}
+				key={1}
+			>
 				<Link className='nav-link' to={this.path('/books')}>
 					Books
 				</Link>
 			</li>,
-			<li className='nav-item' key={2}>
+			<li
+				className={`nav-item ${
+					fragments.includes('categories') ? 'active' : ''
+				}`}
+				key={2}
+			>
 				<Link className='nav-link' to={this.path('/categories')}>
 					Categories
 				</Link>
@@ -72,14 +88,24 @@ export default class Links extends Component<{}, State> {
 
 		if (this.state.role && this.state.role.name === 'Admin') {
 			links.push(
-				<li className='nav-item' key={3}>
+				<li
+					className={`nav-item ${
+						fragments.includes('tags') ? 'active' : ''
+					}`}
+					key={3}
+				>
 					<Link className='nav-link' to={this.path('/tags')}>
 						Tags
 					</Link>
 				</li>
 			);
 			links.push(
-				<li className='nav-item' key={4}>
+				<li
+					className={`nav-item ${
+						fragments.includes('users') ? 'active' : ''
+					}`}
+					key={4}
+				>
 					<Link className='nav-link' to={this.path('/users')}>
 						Users
 					</Link>
@@ -99,7 +125,7 @@ export default class Links extends Component<{}, State> {
 			>
 				<ul className='navbar-nav'>
 					{this.renderLinks()}
-					<li className='nav-item'>
+					<li className={`nav-item`}>
 						<a
 							className='nav-link'
 							rel='tooltip noreferrer'
@@ -112,7 +138,7 @@ export default class Links extends Component<{}, State> {
 							<p className='d-lg-none d-xl-none'>Github</p>
 						</a>
 					</li>
-					<li className='nav-item'>
+					<li className={`nav-item`}>
 						<a
 							className='nav-link'
 							rel='tooltip noreferrer'

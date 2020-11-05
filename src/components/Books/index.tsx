@@ -1,7 +1,20 @@
 import React, { Component } from 'react';
+import { Route, RouteComponentProps, Switch } from 'react-router-dom';
 
-export default class Books extends Component {
+import List from './list';
+import Form from './form';
+
+export default class Books extends Component<RouteComponentProps> {
 	render() {
-		return <div></div>;
+		const path = (route: string) => {
+			return this.props.match.path + route;
+		};
+
+		return (
+			<Switch>
+				<Route path={path('')} component={List} exact />
+				<Route path={path('/add')} component={Form} />
+			</Switch>
+		);
 	}
 }

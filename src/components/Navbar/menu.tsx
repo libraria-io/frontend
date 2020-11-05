@@ -19,9 +19,9 @@ export default class Menu extends Component<{}, State> {
 		super(props);
 
 		this.state = {
-			user: state.get<User>('user'),
+			user: state.has('user') ? state.get<User>('user') : null,
 			logged: state.has('user'),
-			role: state.get<Role>('role'),
+			role: state.has('role') ? state.get<Role>('role') : null,
 		};
 	}
 

@@ -10,6 +10,10 @@
 	animation: spinning 2s linear infinite;
 }
 
+.clickable {
+	cursor: pointer;
+}
+
 @-moz-keyframes spinning {
 	from {
 		-moz-transform: rotate(0deg);

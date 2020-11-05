@@ -28,11 +28,34 @@ export interface User extends Model {
 	roles?: Array<Role>;
 }
 
+export type PaginationLink = {
+	url: string | null;
+	label: string;
+	active: boolean;
+};
+
+export interface PaginatedData<T extends Model> {
+	current_page: number;
+	data: Array<T>;
+	first_page_url: string;
+	from: number;
+	last_page: number;
+	last_page_url: string;
+	links: Array<PaginationLink>;
+	next_page_url: string | null;
+	path: string;
+	per_page: number;
+	prev_page_url: string | null;
+	to: number;
+	total: number;
+}
+
 export interface File extends Model {
 	type: string;
 	name: string;
 	size: number;
 	public: boolean;
+	uri: string;
 }
 
 export interface Category extends Model {

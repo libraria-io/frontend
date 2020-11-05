@@ -57,11 +57,11 @@ export default class Login extends Component<RouteComponentProps> {
 					state.set('role', role);
 
 					this.props.history.push(destination);
-					toastr.success('Logged in successfully!');
+					toastr.success(`Welcome back, ${user.name}.`);
 				}
 			} catch (error) {
 				console.log(error.toJSON ? error.toJSON() : error);
-				handleErrors(error);
+				handleErrors(error, 'Unable to login.');
 			} finally {
 				setSubmitting(false);
 			}

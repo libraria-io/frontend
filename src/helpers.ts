@@ -1,6 +1,10 @@
 import toaster from 'toastr';
 
-export const handleErrors = (error: any, toastr: Toastr = toaster) => {
+export const handleErrors = (
+	error: any,
+	defaultMessage = 'Something went wrong.',
+	toastr = toaster
+) => {
 	if (error.response) {
 		if (error.response.data.errors && error.response.status === 422) {
 			Object.entries(
@@ -22,5 +26,5 @@ export const handleErrors = (error: any, toastr: Toastr = toaster) => {
 		}
 		return;
 	}
-	toastr.error('Unable to register.');
+	toastr.error(defaultMessage);
 };

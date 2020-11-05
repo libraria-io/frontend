@@ -47,7 +47,7 @@ export default class Register extends Component<RouteComponentProps> {
 				}
 			} catch (error) {
 				console.log(error.toJSON ? error.toJSON() : error);
-				handleErrors(error);
+				handleErrors(error, 'Unable to register.');
 			} finally {
 				setSubmitting(false);
 			}
