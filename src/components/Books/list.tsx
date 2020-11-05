@@ -4,6 +4,9 @@ import { Book, PaginatedData } from '../../contracts';
 import { handleErrors } from '../../helpers';
 import { BookService } from '../../services';
 
+import { ReactComponent as PencilIcon } from 'bootstrap-icons/icons/pencil.svg';
+import { ReactComponent as TrashIcon } from 'bootstrap-icons/icons/trash.svg';
+
 type State = {
 	data: PaginatedData<Book>;
 	isLoading: boolean;
@@ -23,22 +26,27 @@ export default class List extends Component<RouteComponentProps, State> {
 	}
 
 	componentDidMount() {
-		this.refresh().then(() => this.setState({ loaded: true }));
+		this.refresh();
 	}
 
 	async refresh() {
 		try {
 			const data = await this.service.all<PaginatedData<Book>>();
-			return this.setState({ data });
+			return this.setState({ data, loaded: true });
 		} catch (error) {
 			handleErrors(error, 'Unable to fetch books.');
 			return Promise.reject(error);
 		}
 	}
 
+	randomBadge() {
+		const badges = ['primary', 'warning', 'success', 'info', 'danger'];
+		return badges[Math.floor(Math.random() * badges.length)];
+	}
+
 	render() {
 		const path = (route: string) => {
-			return window.location.pathname + route;
+			return this.props.match.path + route;
 		};
 		return (
 			<div className='container'>
@@ -64,19 +72,36 @@ export default class List extends Component<RouteComponentProps, State> {
 					{this.state.loaded
 						? this.state.data.data.map((book, index) => (
 								<div
-									className='col-sm-12 col-md-4 col-lg-3 p-2'
+									className='col-sm-12 col-md-4 p-2'
 									key={index}
 								>
 									<div className='card shadow text-dark text-left'>
 										<img
-											// src={book.photo?.uri}
-											src='http://via.placeholder.com/300'
+											src={book.photo?.uri}
 											alt={`${book.title} cover`}
 											className='card-img-top'
 										/>
 										<div className='card-body'>
-											<h5 className='card-title'>
-												{book.title}
+											<h5 className='card-title d-flex'>
+												<div className='align-self-center'>
+													{book.title}
+												</div>
+												<Link
+													className='align-self-center ml-auto mr-1'
+													to={path(
+														`/${book.id}/edit`
+													)}
+												>
+													<PencilIcon />
+												</Link>
+												<Link
+													className='align-self-center mx-1'
+													to={path(
+														`/${book.id}/delete`
+													)}
+												>
+													<TrashIcon />
+												</Link>
 											</h5>
 											<h6 className='card-title'>
 												{book.category?.name}
@@ -90,6 +115,19 @@ export default class List extends Component<RouteComponentProps, State> {
 											<div className='card-text'>
 												By: {book.author?.user?.name}
 											</div>
+											{book.tags?.map((tag, index) => (
+												<small
+													className={`mx-1 badge-${this.randomBadge()}`}
+													key={index}
+													style={{
+														fontSize: '10px',
+														padding: '2px 4px',
+														borderRadius: '4px',
+													}}
+												>
+													{tag.name}
+												</small>
+											))}
 										</div>
 									</div>
 								</div>

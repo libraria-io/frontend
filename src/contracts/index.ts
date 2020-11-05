@@ -67,6 +67,7 @@ export interface Author extends Model {
 	address: string;
 	website: string;
 	email: string;
+	name: string;
 	user_id: number;
 	user?: User;
 	books?: Array<Book>;
@@ -76,6 +77,7 @@ export interface Book extends Model {
 	title: string;
 	description: string;
 	tag_ids: Array<number>;
+	tags?: Array<Tag>;
 	photo_id: number;
 	photo?: File;
 	category_id: number;

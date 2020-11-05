@@ -7,13 +7,12 @@ export type FS = { [key: string]: any };
 export abstract class BaseService<T extends Model, FS> {
 	protected url = '';
 	protected model: T;
-	protected form: FS;
+	protected form = new FormData();
 	isLoading = false;
 	protected setState: any;
 
 	constructor(setState: any, model?: T) {
 		this.model = model || ({} as T);
-		this.form = {} as FS;
 		this.setState = setState;
 	}
 
@@ -26,9 +25,23 @@ export abstract class BaseService<T extends Model, FS> {
 		return this;
 	}
 
+	getForm() {
+		return this.form;
+	}
+
+	setEntry(key: string, value: any) {
+		this.form.append(key, value);
+		return this;
+	}
+
 	setForm(values: FS) {
+		this.form = new FormData();
 		Object.entries(values).forEach(([key, value]) => {
-			(this.form as any)[key] = value;
+			if (Array.isArray(value)) {
+				value.forEach((v) => this.form.append(`${key}[]`, v));
+			} else {
+				this.form.append(key, value);
+			}
 		});
 		return this;
 	}
@@ -41,9 +54,9 @@ export abstract class BaseService<T extends Model, FS> {
 			.finally(() => this.setState({ isLoading: false }));
 	}
 
-	get() {
+	get(id: number | string) {
 		this.setState({ isLoading: true });
-		return Axios.get<T>(`${this.url}/${this.model.id}`)
+		return Axios.get<T>(`${this.url}/${id}`)
 			.then((response) => response.data)
 			.catch((error) => Promise.reject(error))
 			.finally(() => this.setState({ isLoading: false }));

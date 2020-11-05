@@ -14,6 +14,7 @@ export default class Books extends Component<RouteComponentProps> {
 			<Switch>
 				<Route path={path('')} component={List} exact />
 				<Route path={path('/add')} component={Form} />
+				<Route path={path('/:id/edit')} component={Form} />
 			</Switch>
 		);
 	}
