@@ -5,7 +5,7 @@ import List from './list';
 import Form from './form';
 import Show from './show';
 
-export default class Books extends Component<RouteComponentProps> {
+export default class Authors extends Component<RouteComponentProps> {
 	render() {
 		const path = (route: string) => {
 			return this.props.match.path + route;

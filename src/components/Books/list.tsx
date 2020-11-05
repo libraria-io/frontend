@@ -107,9 +107,12 @@ export default class List extends Component<RouteComponentProps, State> {
 										/>
 										<div className='card-body'>
 											<h5 className='card-title d-flex'>
-												<div className='align-self-center'>
+												<Link
+													to={path(`/${book.id}`)}
+													className='align-self-center'
+												>
 													{book.title}
-												</div>
+												</Link>
 												<Link
 													className='align-self-center ml-auto mr-1'
 													to={path(

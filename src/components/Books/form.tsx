@@ -301,15 +301,13 @@ export default class BookForm extends Component<RCProps<Params>, State> {
 											disabled={isSubmitting}
 											component='select'
 											multiple={true}
+											value={values.tag_ids}
 										>
 											{this.state.tags.map(
 												(tag, index) => (
 													<option
 														key={index}
 														value={tag.id}
-														selected={values.tag_ids.includes(
-															tag.id
-														)}
 													>
 														{tag.name}
 													</option>

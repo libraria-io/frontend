@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Route, RouteComponentProps, Switch } from 'react-router-dom';
 import Books from '../../../Books';
+import Authors from '../../../Authors';
 
 import Container from './container';
 
@@ -20,6 +21,10 @@ export default class Dashboard extends Component<RouteComponentProps> {
 							render={() => <div>Heyyy</div>}
 						/>
 						<Route path={this.path('/books')} component={Books} />
+						<Route
+							path={this.path('/authors')}
+							component={Authors}
+						/>
 					</Switch>
 				</Container>
 			</div>

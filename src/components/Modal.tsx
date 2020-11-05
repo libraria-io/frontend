@@ -4,10 +4,12 @@ type Props = {
 	button: any;
 	title: string;
 	id: string;
+	large?: boolean;
 };
 
 export default class Modal extends Component<Props> {
 	render() {
+		const large = this.props.large || false;
 		return (
 			<div
 				className='modal fade'
@@ -18,7 +20,9 @@ export default class Modal extends Component<Props> {
 				aria-hidden='true'
 			>
 				<div
-					className='modal-dialog modal-dialog-centered'
+					className={`modal-dialog modal-dialog-centered ${
+						large ? 'modal-lg' : ''
+					}`}
 					role='document'
 				>
 					<div className='modal-content'>
