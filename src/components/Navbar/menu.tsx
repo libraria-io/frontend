@@ -78,9 +78,18 @@ export default class Menu extends Component<{}, State> {
 				Settings
 			</Link>,
 			<div className='dropdown-divider' key={3}></div>,
-			<Link className='dropdown-item' to={this.path('/logout')} key={4}>
+			<a
+				onClick={(e) => {
+					e.preventDefault();
+					state.clear();
+					window.location.href = '/';
+				}}
+				className='dropdown-item'
+				href={this.path('/logout')}
+				key={4}
+			>
 				Logout
-			</Link>,
+			</a>,
 		];
 	}
 

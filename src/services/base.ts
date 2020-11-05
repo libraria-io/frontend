@@ -37,12 +37,10 @@ export abstract class BaseService<T extends Model, FS> {
 	setForm(values: FS) {
 		this.form = new FormData();
 		Object.entries(values).forEach(([key, value]) => {
-			if (value !== null || String(value).length > 0) {
-				if (Array.isArray(value)) {
-					value.forEach((v) => this.form.append(`${key}[]`, v));
-				} else {
-					this.form.append(key, value);
-				}
+			if (Array.isArray(value)) {
+				value.forEach((v) => this.form.append(`${key}[]`, v));
+			} else if (value) {
+				this.form.append(key, value);
 			}
 		});
 		return this;

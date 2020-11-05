@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import { RouteComponentProps } from 'react-router-dom';
 import toastr from 'toastr';
 
-import { AuthorService } from '../../services';
+import { CategoryService } from '../../services';
 import { handleErrors } from '../../helpers';
 
 import { ReactComponent as CircleIcon } from 'bootstrap-icons/icons/slash-circle.svg';
@@ -11,9 +11,6 @@ import { ReactComponent as CircleIcon } from 'bootstrap-icons/icons/slash-circle
 type Modes = 'Add' | 'Edit';
 
 interface FormState {
-	address: string;
-	website: string;
-	email: string;
 	name: string;
 }
 
@@ -23,11 +20,11 @@ interface State {
 
 type Params = { id?: string };
 
-export default class AuthorForm extends Component<
+export default class CategoryForm extends Component<
 	RouteComponentProps<Params>,
 	State
 > {
-	authorService = new AuthorService(this.setState.bind(this));
+	categoryService = new CategoryService(this.setState.bind(this));
 	setter: any;
 
 	constructor(props: RouteComponentProps<Params>) {
@@ -41,15 +38,12 @@ export default class AuthorForm extends Component<
 	componentDidMount() {
 		const id = this.props.match.params.id;
 		if (this.state.mode === 'Edit' && id) {
-			this.authorService
+			this.categoryService
 				.get(id)
 				.then((author) => {
-					this.authorService.setModel(author);
+					this.categoryService.setModel(author);
 					const set = this.setter;
 					set('name', author.name);
-					set('website', author.website);
-					set('address', author.address);
-					set('email', author.email);
 				})
 				.catch((error) => {
 					console.log(error);
@@ -68,7 +62,7 @@ export default class AuthorForm extends Component<
 	validate() {
 		return (values: FormState) => {
 			const errors: { [key: string]: string } = {};
-			if (!values.name) {
+			if (!values.name || values.name.length === 0) {
 				errors.name = 'Name is required.';
 			}
 		};
@@ -79,14 +73,14 @@ export default class AuthorForm extends Component<
 			values: FormState,
 			{ setSubmitting }: FormikHelpers<FormState>
 		) => {
-			this.authorService.setForm(values);
+			this.categoryService.setForm(values);
 			this.request()
-				.then((author) =>
-					toastr.success('Author saved succesfully.', author.name)
+				.then((category) =>
+					toastr.success('Category saved succesfully.', category.name)
 				)
 				.catch((errors) => {
 					console.log(errors);
-					handleErrors(errors, 'Unable to save author.');
+					handleErrors(errors, 'Unable to save category.');
 				})
 				.finally(() => setSubmitting(false));
 		};
@@ -94,21 +88,18 @@ export default class AuthorForm extends Component<
 
 	request() {
 		return this.state.mode === 'Add'
-			? this.authorService.post()
-			: this.authorService.put();
+			? this.categoryService.post()
+			: this.categoryService.put();
 	}
 
 	render() {
 		const formState: FormState = {
-			address: '',
-			website: '',
-			email: '',
 			name: '',
 		};
 		return (
 			<div className='container'>
 				<h3 className='my-2 d-flex'>
-					{this.state.mode} Author
+					{this.state.mode} Category
 					<button
 						onClick={(e) => {
 							e.preventDefault();
@@ -128,7 +119,7 @@ export default class AuthorForm extends Component<
 						<Form className='form'>
 							{this.bindSetter(setFieldValue)}
 							<div className='row'>
-								<div className='col-sm-12 col-md-6'>
+								<div className='col-sm-12 col-md-6 col-lg-4'>
 									<div className='form-group'>
 										<label htmlFor='name'>Name:</label>
 										<Field
@@ -148,68 +139,21 @@ export default class AuthorForm extends Component<
 										/>
 									</div>
 								</div>
-								<div className='col-sm-12 col-md-6'>
-									<div className='form-group'>
-										<label htmlFor='website'>
-											Website:
-										</label>
-										<Field
-											type='text'
-											id='website'
-											name='website'
-											placeholder='Website'
-											className={`form-control form-control-sm ${
-												isSubmitting ? 'disabled' : ''
-											}`}
-											disabled={isSubmitting}
-										/>
-									</div>
+								<div className='col-sm-12'>
+									<button
+										type='submit'
+										className={`btn btn-info btn-sm mb-5 ${
+											isSubmitting ? 'disabled' : ''
+										}`}
+										disabled={isSubmitting}
+									>
+										{isSubmitting ? (
+											<CircleIcon className='icon-spin' />
+										) : (
+											'Submit'
+										)}
+									</button>
 								</div>
-								<div className='col-sm-12 col-md-6'>
-									<div className='form-group'>
-										<label htmlFor='email'>Email:</label>
-										<Field
-											type='email'
-											id='email'
-											name='email'
-											placeholder='Email'
-											className={`form-control form-control-sm ${
-												isSubmitting ? 'disabled' : ''
-											}`}
-											disabled={isSubmitting}
-										/>
-									</div>
-								</div>
-								<div className='col-sm-12 col-md-6'>
-									<div className='form-group'>
-										<label htmlFor='address'>
-											Address:
-										</label>
-										<Field
-											type='text'
-											id='address'
-											name='address'
-											placeholder='Address'
-											className={`form-control form-control-sm ${
-												isSubmitting ? 'disabled' : ''
-											}`}
-											disabled={isSubmitting}
-										/>
-									</div>
-								</div>
-								<button
-									type='submit'
-									className={`btn btn-info btn-sm mb-5 ${
-										isSubmitting ? 'disabled' : ''
-									}`}
-									disabled={isSubmitting}
-								>
-									{isSubmitting ? (
-										<CircleIcon className='icon-spin' />
-									) : (
-										'Submit'
-									)}
-								</button>
 							</div>
 						</Form>
 					)}
