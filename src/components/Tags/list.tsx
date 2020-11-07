@@ -3,6 +3,7 @@ import { Link, RouteComponentProps } from 'react-router-dom';
 import { Tag } from '../../contracts';
 import { handleErrors } from '../../helpers';
 import { TagService } from '../../services';
+import state from '../../state';
 import toastr from 'toastr';
 
 import Modal from '../Modal';
@@ -15,6 +16,8 @@ type State = {
 	isLoading: boolean;
 	loaded: boolean;
 };
+
+const isAdmin = state.makeMacro<boolean>('isAdmin');
 
 export default class List extends Component<RouteComponentProps, State> {
 	service = new TagService(this.setState.bind(this));
@@ -81,7 +84,7 @@ export default class List extends Component<RouteComponentProps, State> {
 						<i
 							className={`now-ui-icons arrows-1_refresh-69 clickable align-self-center ${
 								this.state.isLoading ? 'icon-spin' : ''
-							}`}
+							}  ${!isAdmin() ? 'ml-auto' : ''}`}
 							onClick={(e) => this.refresh()}
 						></i>
 					</div>
@@ -98,34 +101,42 @@ export default class List extends Component<RouteComponentProps, State> {
 										<div className='align-self-center'>
 											{tag.name}
 										</div>
-										<Link
-											className='align-self-center ml-auto mr-1'
-											to={path(`/${tag.id}/edit`)}
-										>
-											<PencilIcon />
-										</Link>
-										<TrashIcon
-											className='align-self-center mx-1 text-primary clickable'
-											data-toggle='modal'
-											data-target={`#deleteTagModal${index}`}
-										/>
-									</div>
-									<Modal
-										large={true}
-										id={`deleteTagModal${index}`}
-										title='Delete Tag'
-										button={
-											<button
-												className='btn btn-danger btn-sm'
-												onClick={this.deleteTag(index)}
+										{isAdmin() ? (
+											<Link
+												className='align-self-center ml-auto mr-1'
+												to={path(`/${tag.id}/edit`)}
 											>
-												Confirm
-											</button>
-										}
-									>
-										Are you sure you want to delete{' '}
-										{tag.name}?
-									</Modal>
+												<PencilIcon />
+											</Link>
+										) : null}
+										{isAdmin() ? (
+											<TrashIcon
+												className='align-self-center mx-1 text-primary clickable'
+												data-toggle='modal'
+												data-target={`#deleteTagModal${index}`}
+											/>
+										) : null}
+										{isAdmin() ? (
+											<Modal
+												large={true}
+												id={`deleteTagModal${index}`}
+												title='Delete Tag'
+												button={
+													<button
+														className='btn btn-danger btn-sm'
+														onClick={this.deleteTag(
+															index
+														)}
+													>
+														Confirm
+													</button>
+												}
+											>
+												Are you sure you want to delete{' '}
+												{tag.name}?
+											</Modal>
+										) : null}
+									</div>
 								</div>
 						  ))
 						: null}

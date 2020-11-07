@@ -7,6 +7,7 @@ export class State {
 	protected storage: Storage = localStorage;
 	protected key = 'libraria.io-state';
 	protected listeners: { [key: string]: Array<ChangeEvent> } = {};
+	protected macros: { [key: string]: CallableFunction } = {};
 
 	getStorage() {
 		return this.storage;
@@ -22,6 +23,22 @@ export class State {
 
 	clear() {
 		this.setAll({});
+		return this;
+	}
+
+	call<T = any>(key: string) {
+		if (!(key in this.macros)) {
+			throw new Error(`Macro ${key} is is not registered.`);
+		}
+		return this.macros[key]() as T;
+	}
+
+	macro(key: string, callback: CallableFunction) {
+		if (key in this.macros) {
+			console.log(`Macro ${key} is already registered.`);
+			return;
+		}
+		this.macros[key] = callback;
 		return this;
 	}
 
@@ -77,6 +94,10 @@ export class State {
 			this.listeners[key].splice(index, 1);
 		}
 		return this;
+	}
+
+	makeMacro<T>(key: string) {
+		return () => this.call<T>(key);
 	}
 
 	protected dispatch(key: string, value: any) {

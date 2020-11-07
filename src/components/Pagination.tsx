@@ -19,9 +19,12 @@ export default class Pagination extends Component<Props> {
 			return null;
 		}
 		return (
-			<nav aria-label='Page navigation example'>
+			<nav
+				aria-label='Page navigation example'
+				className='bg-white pt-2 py-2 mb-3 rounded'
+			>
 				<ul
-					className={`pagination ${
+					className={`pagination pagination-sm m-0 ${
 						this.props.dontJustify ? '' : 'justify-content-center'
 					}`}
 				>

@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import './App.scss';
 import state from './state';
-import { Theme } from './contracts';
+import { Role, Theme } from './contracts';
 import { BrowserRouter as Router, RouteComponentProps } from 'react-router-dom';
 import AOS from 'aos';
 import 'aos/src/sass/aos.scss';
@@ -31,9 +31,22 @@ export default class App extends Component<{}, State> {
 
 	constructor(props: RouteComponentProps) {
 		super(props);
+		this.registerStateMacros();
 		this.state = {
 			theme: state.has('theme') ? state.get<Theme>('theme') : 'light',
 		};
+	}
+
+	registerStateMacros() {
+		state.macro('logged', () => state.has('user') && state.has('token'));
+		state.macro(
+			'isAdmin',
+			() =>
+				state.call('logged') &&
+				state.has('role') &&
+				state.get<Role>('role').name === 'Admin'
+		);
+		state.macro('isNormal', () => !state.call('isAdmin'));
 	}
 
 	componentDidMount() {

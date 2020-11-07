@@ -54,9 +54,9 @@ export abstract class BaseService<T extends Model, FS> {
 			.finally(() => this.setState({ isLoading: false }));
 	}
 
-	get(id: number | string) {
+	get(id: number | string | null = null) {
 		this.setState({ isLoading: true });
-		return Axios.get<T>(`${this.url}/${id}`)
+		return Axios.get<T>(`${this.url}/${id ? id : this.model.id}`)
 			.then((response) => response.data)
 			.catch((error) => Promise.reject(error))
 			.finally(() => this.setState({ isLoading: false }));

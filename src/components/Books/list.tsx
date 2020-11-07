@@ -4,6 +4,7 @@ import { Book, PaginatedData } from '../../contracts';
 import { handleErrors } from '../../helpers';
 import { BookService } from '../../services';
 import toastr from 'toastr';
+import state from '../../state';
 
 import Modal from '../Modal';
 import Pagination from '../Pagination';
@@ -16,6 +17,8 @@ type State = {
 	isLoading: boolean;
 	loaded: boolean;
 };
+
+const isAdmin = state.makeMacro<boolean>('isAdmin');
 
 export default class List extends Component<RouteComponentProps, State> {
 	service = new BookService(this.setState.bind(this));
@@ -78,16 +81,18 @@ export default class List extends Component<RouteComponentProps, State> {
 				<div className='row'>
 					<div className='col-12 d-flex px-2 pt-2'>
 						<h4 className='align-self-center m-0 p-0'>Books</h4>
-						<Link
-							to={path('/add')}
-							className='mr-2 align-self-center ml-auto text-dark mt-1'
-						>
-							<i className='now-ui-icons ui-1_simple-add'></i>
-						</Link>
+						{isAdmin() ? (
+							<Link
+								to={path('/add')}
+								className='mr-2 align-self-center ml-auto text-dark mt-1'
+							>
+								<i className='now-ui-icons ui-1_simple-add'></i>
+							</Link>
+						) : null}
 						<i
 							className={`now-ui-icons arrows-1_refresh-69 clickable align-self-center ${
 								this.state.isLoading ? 'icon-spin' : ''
-							}`}
+							} ${!isAdmin() ? 'ml-auto' : ''}`}
 							onClick={(e) => this.refresh()}
 						></i>
 					</div>
@@ -124,36 +129,42 @@ export default class List extends Component<RouteComponentProps, State> {
 												>
 													{book.title}
 												</Link>
-												<Link
-													className='align-self-center ml-auto mr-1'
-													to={path(
-														`/${book.id}/edit`
-													)}
-												>
-													<PencilIcon />
-												</Link>
-												<TrashIcon
-													className='align-self-center mx-1 text-primary clickable'
-													data-toggle='modal'
-													data-target={`#deleteBookModal${index}`}
-												/>
-												<Modal
-													id={`deleteBookModal${index}`}
-													title='Delete Book'
-													button={
-														<button
-															className='btn btn-danger btn-sm'
-															onClick={this.deleteBook(
-																index
-															)}
-														>
-															Confirm
-														</button>
-													}
-												>
-													Are you sure you want to
-													delete {book.title}?
-												</Modal>
+												{isAdmin() ? (
+													<Link
+														className='align-self-center ml-auto mr-1'
+														to={path(
+															`/${book.id}/edit`
+														)}
+													>
+														<PencilIcon />
+													</Link>
+												) : null}
+												{isAdmin() ? (
+													<TrashIcon
+														className='align-self-center mx-1 text-primary clickable'
+														data-toggle='modal'
+														data-target={`#deleteBookModal${index}`}
+													/>
+												) : null}
+												{isAdmin() ? (
+													<Modal
+														id={`deleteBookModal${index}`}
+														title='Delete Book'
+														button={
+															<button
+																className='btn btn-danger btn-sm'
+																onClick={this.deleteBook(
+																	index
+																)}
+															>
+																Confirm
+															</button>
+														}
+													>
+														Are you sure you want to
+														delete {book.title}?
+													</Modal>
+												) : null}
 											</h5>
 											<h6 className='card-title'>
 												{book.category?.name}
