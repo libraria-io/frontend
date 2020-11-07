@@ -4,6 +4,7 @@ import Books from '../../../Books';
 import Authors from '../../../Authors';
 import Categories from '../../../Categories';
 import Tags from '../../../Tags';
+import Users from '../Users';
 
 import Container from './container';
 
@@ -32,6 +33,7 @@ export default class Dashboard extends Component<RouteComponentProps> {
 							component={Categories}
 						/>
 						<Route path={this.path('/tags')} component={Tags} />
+						<Route path={this.path('/users')} component={Users} />
 					</Switch>
 				</Container>
 			</div>

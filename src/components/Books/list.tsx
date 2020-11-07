@@ -6,6 +6,7 @@ import { BookService } from '../../services';
 import toastr from 'toastr';
 
 import Modal from '../Modal';
+import Pagination from '../Pagination';
 
 import { ReactComponent as PencilIcon } from 'bootstrap-icons/icons/pencil.svg';
 import { ReactComponent as TrashIcon } from 'bootstrap-icons/icons/trash.svg';
@@ -32,9 +33,9 @@ export default class List extends Component<RouteComponentProps, State> {
 		this.refresh();
 	}
 
-	async refresh() {
+	async refresh(url: string | null = null) {
 		try {
-			const data = await this.service.all<PaginatedData<Book>>();
+			const data = await this.service.all<PaginatedData<Book>>(url);
 			return this.setState({ data, loaded: true });
 		} catch (error) {
 			handleErrors(error, 'Unable to fetch books.');
@@ -92,6 +93,16 @@ export default class List extends Component<RouteComponentProps, State> {
 					</div>
 					<div className='col-12'>
 						<hr />
+					</div>
+					<div className='col-sm-12'>
+						{this.state.loaded ? (
+							<Pagination
+								pagination={this.state.data}
+								onChange={(url) => {
+									this.refresh(url);
+								}}
+							/>
+						) : null}
 					</div>
 					{this.state.loaded
 						? this.state.data.data.map((book, index) => (
@@ -181,6 +192,16 @@ export default class List extends Component<RouteComponentProps, State> {
 								</div>
 						  ))
 						: null}
+					<div className='col-sm-12'>
+						{this.state.loaded ? (
+							<Pagination
+								pagination={this.state.data}
+								onChange={(url) => {
+									this.refresh(url);
+								}}
+							/>
+						) : null}
+					</div>
 				</div>
 			</div>
 		);

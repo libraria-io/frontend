@@ -46,9 +46,9 @@ export abstract class BaseService<T extends Model, FS> {
 		return this;
 	}
 
-	all<R = Array<T>>() {
+	all<R = Array<T>>(url: string | null = null) {
 		this.setState({ isLoading: true });
-		return Axios.get<R>(this.url)
+		return Axios.get<R>(url ? url : this.url)
 			.then((response) => response.data)
 			.catch((error) => Promise.reject(error))
 			.finally(() => this.setState({ isLoading: false }));
